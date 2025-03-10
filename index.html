@@ -79,39 +79,51 @@
                 const displayArea = document.getElementById('json-display');
                 displayArea.innerHTML = '';
 
-                // Parcours des données JSON et affichage des endpoints
-                data.endpoints.forEach(endpoint => {
-                    const endpointElement = document.createElement('div');
-                    endpointElement.classList.add('endpoint-item');
+                // Parcours des chemins dans les données JSON
+                for (let path in data.paths) {
+                    const pathItem = data.paths[path];
 
-                    const endpointTitle = document.createElement('h3');
-                    endpointTitle.textContent = `${endpoint.method} ${endpoint.url}`;
-                    endpointElement.appendChild(endpointTitle);
+                    // Parcours des méthodes (GET, POST, etc.) pour chaque chemin
+                    for (let method in pathItem) {
+                        const endpoint = pathItem[method];
 
-                    const description = document.createElement('p');
-                    description.textContent = endpoint.description;
-                    endpointElement.appendChild(description);
+                        const endpointElement = document.createElement('div');
+                        endpointElement.classList.add('endpoint-item');
 
-                    if (endpoint.parameters) {
-                        const paramsTitle = document.createElement('p');
-                        paramsTitle.textContent = 'Paramètres:';
-                        endpointElement.appendChild(paramsTitle);
+                        // Ajout du titre avec la méthode et l'URL
+                        const endpointTitle = document.createElement('h3');
+                        endpointTitle.textContent = `${method.toUpperCase()} ${path}`;
+                        endpointElement.appendChild(endpointTitle);
 
-                        const paramsPre = document.createElement('pre');
-                        paramsPre.textContent = JSON.stringify(endpoint.parameters, null, 4);
-                        endpointElement.appendChild(paramsPre);
+                        // Description de l'endpoint
+                        const description = document.createElement('p');
+                        description.textContent = endpoint.summary || 'Aucune description fournie';
+                        endpointElement.appendChild(description);
+
+                        // Paramètres de la requête
+                        if (endpoint.parameters && endpoint.parameters.length > 0) {
+                            const paramsTitle = document.createElement('p');
+                            paramsTitle.textContent = 'Paramètres :';
+                            endpointElement.appendChild(paramsTitle);
+
+                            const paramsPre = document.createElement('pre');
+                            paramsPre.textContent = JSON.stringify(endpoint.parameters, null, 4);
+                            endpointElement.appendChild(paramsPre);
+                        }
+
+                        // Réponse de l'endpoint
+                        const responseTitle = document.createElement('p');
+                        responseTitle.textContent = 'Réponse :';
+                        endpointElement.appendChild(responseTitle);
+
+                        const responsePre = document.createElement('pre');
+                        responsePre.textContent = JSON.stringify(endpoint.responses, null, 4);
+                        endpointElement.appendChild(responsePre);
+
+                        // Ajout de l'endpoint à la liste
+                        displayArea.appendChild(endpointElement);
                     }
-
-                    const responseTitle = document.createElement('p');
-                    responseTitle.textContent = 'Réponse:';
-                    endpointElement.appendChild(responseTitle);
-
-                    const responsePre = document.createElement('pre');
-                    responsePre.textContent = JSON.stringify(endpoint.response, null, 4);
-                    endpointElement.appendChild(responsePre);
-
-                    displayArea.appendChild(endpointElement);
-                });
+                }
             })
             .catch(error => {
                 console.error('Erreur lors du chargement du fichier JSON:', error);
