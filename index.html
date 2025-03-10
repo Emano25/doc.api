@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation JSON</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Documentation API</h1>
+    <h2>Liste des Endpoints</h2>
+    <pre id="json-display"></pre>
+
+    <script>
+        // Chargement du fichier JSON
+        fetch('index.json')
+            .then(response => response.json())
+            .then(data => {
+                // Affichage du contenu du fichier JSON
+                document.getElementById('json-display').textContent = JSON.stringify(data, null, 4);
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement du fichier JSON:', error);
+            });
+    </script>
+</body>
+</html>
