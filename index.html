@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,40 +13,49 @@
             margin: 0;
             padding: 0;
         }
+
         header {
             background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
             text-align: center;
         }
-        h1, h2 {
+
+        h1,
+        h2 {
             color: #333;
         }
+
         .container {
             width: 80%;
             margin: 0 auto;
             padding: 20px;
         }
+
         .endpoint-list {
             background-color: white;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .endpoint-item {
             padding: 10px;
             margin: 10px 0;
             background-color: #f9f9f9;
             border-radius: 5px;
         }
+
         .endpoint-item h3 {
             margin: 0;
             color: #4CAF50;
         }
+
         .endpoint-item p {
             margin: 5px 0;
             color: #555;
         }
+
         pre {
             background-color: #f4f4f4;
             padding: 15px;
@@ -54,8 +64,37 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .method-get {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .method-post {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .method-put {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .method-delete {
+            background-color: #F44336;
+            color: white;
+        }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -90,6 +129,13 @@
                         const endpointElement = document.createElement('div');
                         endpointElement.classList.add('endpoint-item');
 
+                        // Création de la méthode avec style
+                        const methodElement = document.createElement('span');
+                        methodElement.classList.add('method');
+                        methodElement.classList.add(`method-${method.toLowerCase()}`);
+                        methodElement.textContent = method.toUpperCase();
+                        endpointElement.appendChild(methodElement);
+
                         // Ajout du titre avec la méthode et l'URL
                         const endpointTitle = document.createElement('h3');
                         endpointTitle.textContent = `${method.toUpperCase()} ${path}`;
@@ -113,12 +159,41 @@
 
                         // Réponse de l'endpoint
                         const responseTitle = document.createElement('p');
-                        responseTitle.textContent = 'Réponse :';
+                        responseTitle.textContent = 'Réponses :';
                         endpointElement.appendChild(responseTitle);
 
-                        const responsePre = document.createElement('pre');
-                        responsePre.textContent = JSON.stringify(endpoint.responses, null, 4);
-                        endpointElement.appendChild(responsePre);
+                        // Traitement des réponses 200 et 401
+                        if (endpoint.responses) {
+                            for (let statusCode in endpoint.responses) {
+                                const response = endpoint.responses[statusCode];
+
+                                const responseElement = document.createElement('div');
+                                responseElement.classList.add('response');
+
+                                const responseStatus = document.createElement('strong');
+                                responseStatus.textContent = `Réponse ${statusCode}: `;
+                                responseElement.appendChild(responseStatus);
+
+                                // Affichage du contenu de la réponse
+                                if (statusCode === '200') {
+                                    const responseContent = response.content['application/json'];
+                                    if (responseContent) {
+                                        const responseSchema = responseContent.schema;
+                                        if (responseSchema) {
+                                            const schemaPre = document.createElement('pre');
+                                            schemaPre.textContent = JSON.stringify(responseSchema, null, 4);
+                                            responseElement.appendChild(schemaPre);
+                                        }
+                                    }
+                                } else {
+                                    const description = document.createElement('p');
+                                    description.textContent = response.description || 'Pas de description';
+                                    responseElement.appendChild(description);
+                                }
+
+                                endpointElement.appendChild(responseElement);
+                            }
+                        }
 
                         // Ajout de l'endpoint à la liste
                         displayArea.appendChild(endpointElement);
@@ -131,4 +206,5 @@
     </script>
 
 </body>
+
 </html>
