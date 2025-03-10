@@ -3,28 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation JSON</title>
+    <title>Documentation API</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .endpoint-list {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .endpoint-item {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .endpoint-item h3 {
+            margin: 0;
+            color: #4CAF50;
+        }
+        .endpoint-item p {
+            margin: 5px 0;
+            color: #555;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
-    <h1>Documentation API</h1>
-    <h2>Liste des Endpoints</h2>
-    <pre id="json-display"></pre>
+
+    <header>
+        <h1>Documentation API</h1>
+        <p>Découvrez les endpoints disponibles dans notre API</p>
+    </header>
+
+    <div class="container">
+        <h2>Liste des Endpoints</h2>
+
+        <div class="endpoint-list" id="json-display">
+            <!-- Les données JSON seront insérées ici -->
+        </div>
+    </div>
 
     <script>
         // Chargement du fichier JSON
         fetch('index.json')
             .then(response => response.json())
             .then(data => {
-                // Affichage du contenu du fichier JSON
-                document.getElementById('json-display').textContent = JSON.stringify(data, null, 4);
+                const displayArea = document.getElementById('json-display');
+                displayArea.innerHTML = '';
+
+                // Parcours des données JSON et affichage des endpoints
+                data.endpoints.forEach(endpoint => {
+                    const endpointElement = document.createElement('div');
+                    endpointElement.classList.add('endpoint-item');
+
+                    const endpointTitle = document.createElement('h3');
+                    endpointTitle.textContent = `${endpoint.method} ${endpoint.url}`;
+                    endpointElement.appendChild(endpointTitle);
+
+                    const description = document.createElement('p');
+                    description.textContent = endpoint.description;
+                    endpointElement.appendChild(description);
+
+                    if (endpoint.parameters) {
+                        const paramsTitle = document.createElement('p');
+                        paramsTitle.textContent = 'Paramètres:';
+                        endpointElement.appendChild(paramsTitle);
+
+                        const paramsPre = document.createElement('pre');
+                        paramsPre.textContent = JSON.stringify(endpoint.parameters, null, 4);
+                        endpointElement.appendChild(paramsPre);
+                    }
+
+                    const responseTitle = document.createElement('p');
+                    responseTitle.textContent = 'Réponse:';
+                    endpointElement.appendChild(responseTitle);
+
+                    const responsePre = document.createElement('pre');
+                    responsePre.textContent = JSON.stringify(endpoint.response, null, 4);
+                    endpointElement.appendChild(responsePre);
+
+                    displayArea.appendChild(endpointElement);
+                });
             })
             .catch(error => {
                 console.error('Erreur lors du chargement du fichier JSON:', error);
             });
     </script>
+
 </body>
 </html>
